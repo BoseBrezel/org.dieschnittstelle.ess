@@ -1,5 +1,6 @@
 package org.dieschnittstelle.ess.ser;
 
+import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 
 import jakarta.servlet.http.HttpServlet;
@@ -9,6 +10,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import static org.dieschnittstelle.ess.utils.Utils.*;
 
 import org.apache.logging.log4j.Logger;
+import org.dieschnittstelle.ess.entities.crm.AbstractTouchpoint;
 
 public class TouchpointServiceServlet extends HttpServlet {
 
@@ -41,7 +43,9 @@ public class TouchpointServiceServlet extends HttpServlet {
 			// write the object
 			oos.writeObject(exec.readAllTouchpoints());
 			oos.close();
-		} catch (Exception e) {
+		}
+		catch (Exception e)
+		{
 			String err = "got exception: " + e;
 			logger.error(err, e);
 			throw new RuntimeException(e);
@@ -52,7 +56,7 @@ public class TouchpointServiceServlet extends HttpServlet {
 	/*
 	 * TODO: SER3 server-side implementation of createNewTouchpoint
 	 */
-	/*
+
 	@Override	
 	protected void doPost(HttpServletRequest request,
 			HttpServletResponse response) {
@@ -64,9 +68,11 @@ public class TouchpointServiceServlet extends HttpServlet {
 
 		try {
 			// create an ObjectInputStream from the request's input stream
-		
+			ObjectInputStream ois = new ObjectInputStream(request.getInputStream());
+
 			// read an AbstractTouchpoint object from the stream
-		
+			AbstractTouchpoint tp = (AbstractTouchpoint) ois.readObject();
+			show("recived tp from client: ", tp);
 			// call the create method on the executor and take its return value
 		
 			// set the response status as successful, using the appropriate
@@ -74,19 +80,16 @@ public class TouchpointServiceServlet extends HttpServlet {
 		
 			// then write the object to the response's output stream, using a
 			// wrapping ObjectOutputStream
-		
+			response.setStatus(HttpServletResponse.SC_OK);
 			// ... and write the object to the stream
+			//oos.writeObject(tp);
 		
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
 
 	}
-	*/
-
 	/*
 	 * TODO: SER4 server-side implementation of deleteTouchpoint
 	 */
-
-
 }
