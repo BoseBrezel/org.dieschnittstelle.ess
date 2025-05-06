@@ -169,7 +169,7 @@ public class ShowTouchpointService {
 	}
 
 	/**
-	 * TODO SER4
+	 * TODO SER4 test
 	 * 
 	 * @param tp
 	 */
