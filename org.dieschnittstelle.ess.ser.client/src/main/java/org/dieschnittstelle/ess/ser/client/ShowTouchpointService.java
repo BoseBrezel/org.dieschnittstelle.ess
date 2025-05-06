@@ -2,10 +2,12 @@ package org.dieschnittstelle.ess.ser.client;
 
 import java.io.*;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
+import org.apache.http.client.methods.HttpDelete;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.concurrent.FutureCallback;
@@ -118,10 +120,9 @@ public class ShowTouchpointService {
 		// demonstrate access to the asynchronously running servlet (client-side access is asynchronous in any case)
 		boolean async = false;
 
-		try {
-
+		try
+		{
 			// create a GetMethod
-
 			// UE SER1: Aendern Sie die URL von api->gui
 			HttpGet get = new HttpGet(
 					"http://localhost:8080/api/" + (async ? "async/touchpoints" : "touchpoints"));
@@ -154,7 +155,9 @@ public class ShowTouchpointService {
 
 				return touchpoints;
 
-			} else {
+			}
+			else
+			{
 				String err = "could not successfully execute request. Got status code: "
 						+ response.getStatusLine().getStatusCode();
 				logger.error(err);
@@ -173,13 +176,37 @@ public class ShowTouchpointService {
 	 *
 	 * @param tp
 	 */
-	public void deleteTouchpoint(AbstractTouchpoint tp) {
+	public void deleteTouchpoint(AbstractTouchpoint tp)
+	{
 		logger.info("deleteTouchpoint(): will delete: " + tp);
 
 		createClient();
 
 		logger.debug("client running: {}",client.isRunning());
 
+		HttpDelete delete = new HttpDelete("http://localhost:8080/api/touchpoints/" + tp.getId());
+		show("Delete request: " + delete);
+
+		Future<HttpResponse> responseFuture = client.execute(delete, null);
+		show("test " + responseFuture);
+		//Future<HttpResponse> responseFuture = client.execute(delete, null);
+		// get the response from the Future object
+        //HttpResponse httpResponse = null;
+        try {
+			//httpResponse = responseFuture.get();
+			//if (httpResponse.getStatusLine().getStatusCode() == HttpStatus.SC_OK)
+			//{
+			//	ObjectInputStream ois = new ObjectInputStream(httpResponse.getEntity().getContent());
+			//	AbstractTouchpoint recivedTp = (AbstractTouchpoint) ois.readObject();
+			//	show("recived tp " + recivedTp);
+			//}
+		}
+		catch (Exception e)
+		{
+            throw new RuntimeException(e);
+        }
+
+		//show("got response: %s", httpResponse );
 	}
 
 	/**
@@ -223,29 +250,27 @@ public class ShowTouchpointService {
 			Future<HttpResponse> responseFuture = client.execute(post, null);
 			// get the response from the Future object
 			HttpResponse httpResponse = responseFuture.get();
-			show("got response: %s", httpResponse );
-
-			// get the response from the Future object
-
-			// log the status line
-
+			/* if successful: */ // log the status line
 			// evaluate the result using getStatusLine(), use constants in
 			// HttpStatus
+			if (httpResponse.getStatusLine().getStatusCode() == HttpStatus.SC_OK)
+			{
+				// create an object input stream using getContent() from the
+				// response entity (accessible via getEntity())
+				ObjectInputStream ois = new ObjectInputStream(httpResponse.getEntity().getContent());
+				// read the touchpoint object from the input stream
+				AbstractTouchpoint recivedTp = (AbstractTouchpoint) ois.readObject();
+				show("recived tp " + recivedTp);
+				// return the object that you have read from the response
+				return recivedTp;
+			}
+			show("got response: %s", httpResponse );
 
-			/* if successful: */
-
-			// create an object input stream using getContent() from the
-			// response entity (accessible via getEntity())
-
-			// read the touchpoint object from the input stream
-
-			// return the object that you have read from the response
 			return null;
 		} catch (Exception e) {
 			logger.error("got exception: " + e, e);
 			throw new RuntimeException(e);
 		}
-
 	}
 
 	/**

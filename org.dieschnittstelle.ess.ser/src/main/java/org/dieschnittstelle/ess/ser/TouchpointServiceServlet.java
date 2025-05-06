@@ -65,6 +65,7 @@ public class TouchpointServiceServlet extends HttpServlet {
 		// no need to check the uri that has been used
 
 		// obtain the executor for reading out the touchpoints from the servlet context using the touchpointCRUD attribute
+		TouchpointCRUDExecutor exec = (TouchpointCRUDExecutor) getServletContext().getAttribute("touchpointCRUD");
 
 		try {
 			// create an ObjectInputStream from the request's input stream
@@ -74,16 +75,17 @@ public class TouchpointServiceServlet extends HttpServlet {
 			AbstractTouchpoint tp = (AbstractTouchpoint) ois.readObject();
 			show("recived tp from client: ", tp);
 			// call the create method on the executor and take its return value
-		
+			exec.createTouchpoint(tp);
 			// set the response status as successful, using the appropriate
 			// constant from HttpServletResponse
-		
+			response.setStatus(HttpServletResponse.SC_OK);
+
 			// then write the object to the response's output stream, using a
 			// wrapping ObjectOutputStream
-			response.setStatus(HttpServletResponse.SC_OK);
+			ObjectOutputStream oos = new ObjectOutputStream(response.getOutputStream());
 			// ... and write the object to the stream
-			//oos.writeObject(tp);
-		
+			oos.writeObject(tp);
+
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
@@ -92,4 +94,41 @@ public class TouchpointServiceServlet extends HttpServlet {
 	/*
 	 * TODO: SER4 server-side implementation of deleteTouchpoint
 	 */
+	@Override
+	protected void doDelete(HttpServletRequest request, HttpServletResponse response)
+	{
+		show("reciced delete");
+
+		TouchpointCRUDExecutor exec = (TouchpointCRUDExecutor) getServletContext().getAttribute("touchpointCRUD");
+		request.getPathInfo();
+		show("reciced id " + request.getPathInfo());
+		try
+		{
+			show("Test1: ");
+			String pathInfo = request.getPathInfo();
+			if (pathInfo != null && pathInfo.length() > 1)
+			{
+				show("Test2: ");
+				String idStr = pathInfo.substring(1);
+				show("Test3: ");
+				long tpId = Long.parseLong(idStr);
+				show("Test4 mit ID: " + tpId);
+				exec.deleteTouchpoint(tpId);
+				show("Test5: " );
+				response.setStatus(HttpServletResponse.SC_OK);
+
+			}
+			else
+			{
+				show("Folgender String kann nicht in Long konvertiert werden " + pathInfo );
+				response.setStatus(HttpServletResponse.SC_CONFLICT);
+			}
+			// set the response status as successful, using the appropriate
+			// constant from HttpServletResponse
+		}
+		catch (Exception e)
+		{
+			throw new RuntimeException(e);
+		}
+	}
 }
