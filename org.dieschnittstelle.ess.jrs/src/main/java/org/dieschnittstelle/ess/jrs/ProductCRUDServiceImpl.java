@@ -4,6 +4,8 @@ import org.dieschnittstelle.ess.entities.erp.IndividualisedProductItem;
 
 import java.util.List;
 
+import static org.dieschnittstelle.ess.utils.Utils.show;
+
 /*
  * TODO JRS2: implementieren Sie hier die im Interface deklarierten Methoden
  */
@@ -18,7 +20,8 @@ public class ProductCRUDServiceImpl implements IProductCRUDService {
 	}
 
 	@Override
-	public List<IndividualisedProductItem> readAllProducts() {
+	public List<IndividualisedProductItem> readAllProducts()
+	{
 		// TODO Auto-generated method stub
 		return null;
 	}

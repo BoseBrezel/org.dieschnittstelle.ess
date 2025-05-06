@@ -39,6 +39,9 @@ public class TouchpointCRUDServiceImpl implements ITouchpointCRUDService {
 
     @Override
     public List<StationaryTouchpoint> readAllTouchpoints() {
+
+        StationaryTouchpoint st = new StationaryTouchpoint();
+        st.setName("Test Touchpoint");
         return (List) this.touchpointCRUD.readAllObjects();
     }
 
