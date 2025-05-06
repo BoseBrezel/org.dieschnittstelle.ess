@@ -170,7 +170,7 @@ public class ShowTouchpointService {
 
 	/**
 	 * TODO SER4
-	 * test
+	 *
 	 * @param tp
 	 */
 	public void deleteTouchpoint(AbstractTouchpoint tp) {
