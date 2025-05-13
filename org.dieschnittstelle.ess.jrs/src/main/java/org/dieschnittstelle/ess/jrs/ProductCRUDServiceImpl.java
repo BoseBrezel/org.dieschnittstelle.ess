@@ -51,7 +51,7 @@ public class ProductCRUDServiceImpl implements IProductCRUDService {
 		}
 		else
 		{
-			throw new NotFoundException("The product with id " + id + " does not exist!");
+			return null;
 		}
 	}
 
@@ -59,9 +59,12 @@ public class ProductCRUDServiceImpl implements IProductCRUDService {
 	public boolean deleteProduct(long id)
 	{
 		IndividualisedProductItem prod = (IndividualisedProductItem) getExecFromServletContext().readObject(id);
-		if (prod != null) {
+		if (prod != null)
+		{
 			return getExecFromServletContext().deleteObject(id);
-		} else {
+		}
+		else
+		{
 			return false;
 		}
 	}
@@ -77,7 +80,7 @@ public class ProductCRUDServiceImpl implements IProductCRUDService {
 		}
 		else
 		{
-			throw new NotFoundException("The product with id " + id + " does not exist!");
+			return null;
 		}
 	}
 	
