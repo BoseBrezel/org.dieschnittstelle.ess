@@ -11,6 +11,7 @@ import jakarta.ws.rs.core.Context;
 import org.apache.logging.log4j.Logger;
 import org.dieschnittstelle.ess.entities.crm.StationaryTouchpoint;
 import org.dieschnittstelle.ess.entities.GenericCRUDExecutor;
+import org.dieschnittstelle.ess.entities.erp.IndividualisedProductItem;
 
 public class TouchpointCRUDServiceImpl implements ITouchpointCRUDService {
 
@@ -72,5 +73,17 @@ public class TouchpointCRUDServiceImpl implements ITouchpointCRUDService {
     /*
      * UE JRS1: implement the method for updating touchpoints
      */
+    @Override
+    public StationaryTouchpoint updateTouchpoint(long id, StationaryTouchpoint update) {
+        StationaryTouchpoint tp = (StationaryTouchpoint) this.touchpointCRUD.readObject(id);
 
+        if (tp != null)
+        {
+            return this.touchpointCRUD.updateObject(id,update);
+        }
+        else
+        {
+            throw new NotFoundException("The touchpoint with id " + id + " does not exist!");
+        }
+    }
 }
