@@ -6,7 +6,6 @@ import org.dieschnittstelle.ess.entities.erp.IndividualisedProductItem;
 
 import java.util.List;
 
-
 /*
  * UE JRS2: 
  * deklarieren Sie hier Methoden fuer:
@@ -25,22 +24,27 @@ import java.util.List;
 @Consumes({MediaType.APPLICATION_JSON})
 @Produces({MediaType.APPLICATION_JSON})
 public interface IProductCRUDService {
-
-	@POST
-	public IndividualisedProductItem createProduct(IndividualisedProductItem prod);
-
+	//Get All
 	@GET
 	public List<IndividualisedProductItem> readAllProducts();
 
+	//Get by id
+	@GET
+	@Path("{iD}")
+	public IndividualisedProductItem readProduct( @PathParam("iD") long id);
+
+	//Put
 	@PUT
 	@Path("{iD}")
 	public IndividualisedProductItem updateProduct( @PathParam("iD") long id, IndividualisedProductItem update);
+
+	//Delete
 	@DELETE
 	@Path("{iD}")
 	boolean deleteProduct( @PathParam("iD") long id);
 
-	@GET
-	@Path("{iD}")
-	public IndividualisedProductItem readProduct( @PathParam("iD") long id);
-			
+	//Post
+	@POST
+	public IndividualisedProductItem createProduct(IndividualisedProductItem prod);
+
 }
