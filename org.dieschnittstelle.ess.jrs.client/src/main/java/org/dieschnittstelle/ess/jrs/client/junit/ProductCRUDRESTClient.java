@@ -19,15 +19,14 @@ public class ProductCRUDRESTClient {
 	
 	protected static Logger logger = org.apache.logging.log4j.LogManager.getLogger(ProductCRUDRESTClient.class);
 
-	public ProductCRUDRESTClient() throws Exception {
-
-
+	public ProductCRUDRESTClient() throws Exception
+	{
 		/*
 		 * TODO: JRS2: create a client for the web service using ResteasyClientBuilder and ResteasyWebTarget
 		 */
 		boolean async = false;
+		//serviceProxy = null;
 
-		serviceProxy = null;
 		Client client = ClientBuilder.newBuilder()
 				.build()
 				// use our custom jackson provider that is less restrictive if it comes to dealing with polymorphic types
@@ -37,10 +36,10 @@ public class ProductCRUDRESTClient {
 		ResteasyWebTarget target = (ResteasyWebTarget)client.target("http://localhost:8080/api/" + (async ? "async/" : ""));
 		//Frage ist das so richtig?
 		serviceProxy = target.proxy(IProductCRUDService.class);
-
 	}
 
-	public AbstractProduct createProduct(IndividualisedProductItem prod) {
+	public AbstractProduct createProduct(IndividualisedProductItem prod)
+	{
 		AbstractProduct created = serviceProxy.createProduct(prod);
 		// as a side-effect we set the id of the created product on the argument before returning
 		prod.setId(created.getId());

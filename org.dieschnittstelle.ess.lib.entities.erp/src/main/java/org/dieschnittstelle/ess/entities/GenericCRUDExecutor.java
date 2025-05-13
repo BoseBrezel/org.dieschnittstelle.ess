@@ -80,7 +80,7 @@ public class GenericCRUDExecutor<T extends GenericCRUDEntity> {
 	/**
 	 * update an existing object
 	 */
-	public T updateObject(final T obj) {
+	public T updateObject(long id, final T obj) {
 		System.out.println("updateObject(): " + obj);
 
 		// we try to read the object given the id of the object that is being

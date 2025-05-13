@@ -23,33 +23,31 @@ public class ProductCRUDServiceImpl implements IProductCRUDService {
 	//Frage ist das richtig?
 	@Context
 	private ServletContext servletContext;
-	private GenericCRUDExecutor<IndividualisedProductItem> productCRUD;
 
-	//Frage ist IndividualLisedProdictItem richtig?
-	public ProductCRUDServiceImpl(@Context ServletContext servletContext) {
-		// read out the dataAccessor
-		this.productCRUD = (GenericCRUDExecutor<IndividualisedProductItem>) servletContext.getAttribute("productCRUD");
+	private GenericCRUDExecutor<AbstractProduct> getExecFromServletContext()
+	{
+		return (GenericCRUDExecutor<AbstractProduct>) servletContext.getAttribute("productCRUD");
 	}
 
 	@Override
 	public IndividualisedProductItem createProduct(IndividualisedProductItem prod)
 	{
-		return (IndividualisedProductItem) this.productCRUD.createObject(prod);
+		return (IndividualisedProductItem) getExecFromServletContext ().createObject(prod);
 	}
 
 	@Override
 	public List<IndividualisedProductItem> readAllProducts()
 	{
-		return (List) this.productCRUD.readAllObjects();
+		return (List)getExecFromServletContext().readAllObjects();
 	}
 
 	@Override
 	public IndividualisedProductItem updateProduct(long id, IndividualisedProductItem update)
 	{
-		IndividualisedProductItem prod = (IndividualisedProductItem) this.productCRUD.readObject(id);
+		IndividualisedProductItem prod = (IndividualisedProductItem) getExecFromServletContext().readObject(id);
 		if (prod != null)
 		{
-			return this.productCRUD.updateObject(id, update);
+			return (IndividualisedProductItem) getExecFromServletContext().updateObject(id, update);
 		}
 		else
 		{
@@ -60,13 +58,18 @@ public class ProductCRUDServiceImpl implements IProductCRUDService {
 	@Override
 	public boolean deleteProduct(long id)
 	{
-		return this.productCRUD.deleteObject(id);
+		IndividualisedProductItem prod = (IndividualisedProductItem) getExecFromServletContext().readObject(id);
+		if (prod != null) {
+			return getExecFromServletContext().deleteObject(id);
+		} else {
+			return false;
+		}
 	}
 
 	@Override
 	public IndividualisedProductItem readProduct(long id)
 	{
-		IndividualisedProductItem prod = (IndividualisedProductItem) this.productCRUD.readObject(id);
+		IndividualisedProductItem prod = (IndividualisedProductItem) getExecFromServletContext().readObject(id);
 
 		if (prod != null)
 		{
