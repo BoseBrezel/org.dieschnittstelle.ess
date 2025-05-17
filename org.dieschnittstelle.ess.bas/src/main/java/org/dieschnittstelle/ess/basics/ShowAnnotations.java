@@ -3,6 +3,7 @@ package org.dieschnittstelle.ess.basics;
 
 import org.dieschnittstelle.ess.basics.annotations.AnnotatedStockItemBuilder;
 import org.dieschnittstelle.ess.basics.annotations.StockItemProxyImpl;
+import org.dieschnittstelle.ess.basics.annotations.stockitemtypes.DisplayAs;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
@@ -13,7 +14,8 @@ import static org.dieschnittstelle.ess.utils.Utils.*;
 
 public class ShowAnnotations{
 
-	public static void main(String[] args) {
+	public static void main(String[] args)
+	{
 		// we initialise the collection
 		StockItemCollection collection = new StockItemCollection(
 				"stockitems_annotations.xml", new AnnotatedStockItemBuilder());
@@ -23,7 +25,6 @@ public class ShowAnnotations{
 		for (IStockItem consumable : collection.getStockItems()) {
 			showAttributes(((StockItemProxyImpl)consumable).getProxiedObject());
 		}
-
 		// we initialise a consumer
 		Consumer consumer = new Consumer();
 		// ... and let them consume
@@ -44,6 +45,12 @@ public class ShowAnnotations{
             for (Field field : klass.getDeclaredFields())
 			{
 				String fieldName = field.getName();
+				DisplayAs annotation = field.getAnnotation(DisplayAs.class);
+
+				if(annotation != null)
+				{
+					fieldName = annotation.value();
+				}
                 String gettername = getAccessorNameForField("get", field.getName());
                 Method getterMethod = klass.getDeclaredMethod(gettername);
                 Object value = getterMethod.invoke(instance);
@@ -59,9 +66,9 @@ public class ShowAnnotations{
             //  the string representation will not use the field's name, but the name
             //  specified in the the annotation. Regardless of @DisplayAs being present
             //  or not, the field's value will be included in the string representation.
-
         }
-		catch (Exception e) {
+		catch (Exception e)
+		{
 			e.printStackTrace();
 			throw new RuntimeException("showAnnotations(): exception occurred: " + e,e);
 		}

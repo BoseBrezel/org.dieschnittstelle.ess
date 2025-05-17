@@ -176,38 +176,30 @@ public class ShowTouchpointService {
 	 *
 	 * @param tp
 	 */
-	public void deleteTouchpoint(AbstractTouchpoint tp)
-	{
+	public void deleteTouchpoint(AbstractTouchpoint tp) {
 		logger.info("deleteTouchpoint(): will delete: " + tp);
 
 		createClient();
-
-		logger.debug("client running: {}",client.isRunning());
 
 		HttpDelete delete = new HttpDelete("http://localhost:8080/api/touchpoints/" + tp.getId());
 		show("Delete request: " + delete);
 
 		Future<HttpResponse> responseFuture = client.execute(delete, null);
-		show("test " + responseFuture);
-		//Future<HttpResponse> responseFuture = client.execute(delete, null);
-		// get the response from the Future object
-        //HttpResponse httpResponse = null;
-        try {
-			//httpResponse = responseFuture.get();
-			//if (httpResponse.getStatusLine().getStatusCode() == HttpStatus.SC_OK)
-			//{
-			//	ObjectInputStream ois = new ObjectInputStream(httpResponse.getEntity().getContent());
-			//	AbstractTouchpoint recivedTp = (AbstractTouchpoint) ois.readObject();
-			//	show("recived tp " + recivedTp);
-			//}
+		try {
+			HttpResponse httpResponse = responseFuture.get();
+			int statusCode = httpResponse.getStatusLine().getStatusCode();
+			if (statusCode != HttpStatus.SC_OK && statusCode != HttpStatus.SC_NO_CONTENT)
+			{
+				throw new RuntimeException("Delete failed with status code: " + statusCode);
+			}
 		}
 		catch (Exception e)
 		{
-            throw new RuntimeException(e);
-        }
-
-		//show("got response: %s", httpResponse );
+			logger.error("Exception during deleteTouchpoint", e);
+			throw new RuntimeException("Failed to delete touchpoint: " + tp, e);
+		}
 	}
+
 
 	/**
 	 * TODO SER3
@@ -219,15 +211,16 @@ public class ShowTouchpointService {
 	 * 
 	 * @param tp
 	 */
-	public AbstractTouchpoint createNewTouchpoint(AbstractTouchpoint tp) {
+	public AbstractTouchpoint createNewTouchpoint(AbstractTouchpoint tp)
+	{
 		logger.info("createNewTouchpoint(): will create: " + tp);
 
 		createClient();
 
 		logger.debug("client running: {}",client.isRunning());
 
-		try {
-
+		try
+		{
 			// create post request for the api/touchpoints uri
 			HttpPost post = new HttpPost("http://localhost:8080/api/touchpoints");
 
@@ -260,7 +253,6 @@ public class ShowTouchpointService {
 				ObjectInputStream ois = new ObjectInputStream(httpResponse.getEntity().getContent());
 				// read the touchpoint object from the input stream
 				AbstractTouchpoint recivedTp = (AbstractTouchpoint) ois.readObject();
-				show("recived tp " + recivedTp);
 				// return the object that you have read from the response
 				return recivedTp;
 			}
@@ -272,7 +264,6 @@ public class ShowTouchpointService {
 			throw new RuntimeException(e);
 		}
 	}
-
 	/**
 	 * 
 	 * @param stepwise
@@ -280,5 +271,4 @@ public class ShowTouchpointService {
 	public void setStepwise(boolean stepwise) {
 		this.stepwise = stepwise;
 	}
-
 }

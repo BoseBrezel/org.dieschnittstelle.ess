@@ -9,9 +9,11 @@ import org.dieschnittstelle.ess.basics.annotations.Units;
 public class Milch {
 
 	@Units
+	@DisplayAs("AMOUNT")
 	private int menge;
 
 	@Brandname
+	@DisplayAs("BRANDNAME")
 	private String markenname;
 
 	public int getMenge() {

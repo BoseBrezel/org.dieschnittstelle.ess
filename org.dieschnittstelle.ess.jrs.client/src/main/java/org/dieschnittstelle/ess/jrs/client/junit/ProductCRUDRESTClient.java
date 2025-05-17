@@ -34,7 +34,6 @@ public class ProductCRUDRESTClient {
 				.register(LaissezFairePolymorphicJacksonProvider.class);
 
 		ResteasyWebTarget target = (ResteasyWebTarget)client.target("http://localhost:8080/api/" + (async ? "async/" : ""));
-		//Frage ist das so richtig?
 		serviceProxy = target.proxy(IProductCRUDService.class);
 	}
 
@@ -47,12 +46,12 @@ public class ProductCRUDRESTClient {
 	}
 
 	// TODO: activate this method for testing JRS3
-//	public AbstractProduct createCampaign(AbstractProduct prod) {
-//		AbstractProduct created = serviceProxy.createProduct(prod);
-//		// as a side-effect we set the id of the created product on the argument before returning
-//		prod.setId(created.getId());
-//		return created;
-//	}
+	public AbstractProduct createCampaign(AbstractProduct prod) {
+		AbstractProduct created = serviceProxy.createProduct(prod);
+		// as a side-effect we set the id of the created product on the argument before returning
+		prod.setId(created.getId());
+		return created;
+	}
 
 	public List<?> readAllProducts() {
 		return serviceProxy.readAllProducts();
@@ -62,7 +61,8 @@ public class ProductCRUDRESTClient {
 		return serviceProxy.updateProduct(update.getId(),(IndividualisedProductItem)update);
 	}
 
-	public boolean deleteProduct(long id) {
+	public boolean deleteProduct(long id)
+	{
 		return serviceProxy.deleteProduct(id);
 	}
 

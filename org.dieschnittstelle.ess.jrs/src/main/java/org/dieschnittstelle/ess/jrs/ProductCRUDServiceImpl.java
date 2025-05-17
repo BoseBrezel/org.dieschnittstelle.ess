@@ -19,8 +19,6 @@ import static org.dieschnittstelle.ess.utils.Utils.show;
 
 public class ProductCRUDServiceImpl implements IProductCRUDService {
 
-
-	//Frage ist das richtig?
 	@Context
 	private ServletContext servletContext;
 
@@ -30,24 +28,24 @@ public class ProductCRUDServiceImpl implements IProductCRUDService {
 	}
 
 	@Override
-	public IndividualisedProductItem createProduct(IndividualisedProductItem prod)
+	public AbstractProduct createProduct(AbstractProduct prod)
 	{
-		return (IndividualisedProductItem) getExecFromServletContext ().createObject(prod);
+		return (AbstractProduct) getExecFromServletContext ().createObject(prod);
 	}
 
 	@Override
-	public List<IndividualisedProductItem> readAllProducts()
+	public List<AbstractProduct> readAllProducts()
 	{
 		return (List)getExecFromServletContext().readAllObjects();
 	}
 
 	@Override
-	public IndividualisedProductItem updateProduct(long id, IndividualisedProductItem update)
+	public AbstractProduct updateProduct(long id, AbstractProduct update)
 	{
 		IndividualisedProductItem prod = (IndividualisedProductItem) getExecFromServletContext().readObject(id);
 		if (prod != null)
 		{
-			return (IndividualisedProductItem) getExecFromServletContext().updateObject(id, update);
+			return (AbstractProduct) getExecFromServletContext().updateObject(id, update);
 		}
 		else
 		{
@@ -58,15 +56,7 @@ public class ProductCRUDServiceImpl implements IProductCRUDService {
 	@Override
 	public boolean deleteProduct(long id)
 	{
-		IndividualisedProductItem prod = (IndividualisedProductItem) getExecFromServletContext().readObject(id);
-		if (prod != null)
-		{
-			return getExecFromServletContext().deleteObject(id);
-		}
-		else
-		{
-			return false;
-		}
+		return getExecFromServletContext().deleteObject(id);
 	}
 
 	@Override
@@ -80,7 +70,7 @@ public class ProductCRUDServiceImpl implements IProductCRUDService {
 		}
 		else
 		{
-			return null;
+			throw new NotFoundException("The touchpoint with id " + id + " does not exist!");
 		}
 	}
 	

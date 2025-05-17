@@ -11,6 +11,7 @@ public class Schokolade {
 	@Units
 	private int anzahlStuecke;
 
+	@DisplayAs("BRAND")
 	private String marke;
 
 	public int getAnzahlStuecke() {
@@ -22,7 +23,8 @@ public class Schokolade {
 	}
 
 	@Brandname
-	public String getMarke() {
+	public String getMarke()
+	{
 		return marke;
 	}
 
