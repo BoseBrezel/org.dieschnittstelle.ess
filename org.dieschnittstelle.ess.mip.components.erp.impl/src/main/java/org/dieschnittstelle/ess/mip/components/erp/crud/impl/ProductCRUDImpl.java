@@ -20,7 +20,7 @@ public class ProductCRUDImpl implements ProductCRUD
     @Override
     public AbstractProduct createProduct(AbstractProduct prod){
         show("constructor(): $s", prod);
-        return null;
+        return prod;
     }
 
     @Override
@@ -33,7 +33,7 @@ public class ProductCRUDImpl implements ProductCRUD
     public AbstractProduct updateProduct(AbstractProduct update)
     {
         show("updateProduct()");
-        return null;
+        return update;
     }
 
     @Override
