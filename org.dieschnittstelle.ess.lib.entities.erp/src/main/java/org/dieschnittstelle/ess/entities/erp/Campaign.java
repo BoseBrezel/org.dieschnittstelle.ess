@@ -14,6 +14,7 @@ import jakarta.json.bind.annotation.JsonbTypeSerializer;
 import jakarta.persistence.*;
 
 @JsonbTypeSerializer(JsonbJsonTypeInfoHandler.class)
+@Entity
 public class Campaign extends AbstractProduct implements Serializable {
 
 	protected static Logger logger = org.apache.logging.log4j.LogManager.getLogger(Campaign.class);
@@ -23,14 +24,17 @@ public class Campaign extends AbstractProduct implements Serializable {
 	 */
 	private static final long serialVersionUID = 4407600000386810001L;
 
+	@OneToMany(cascade = CascadeType.ALL)
 	private List<ProductBundle> bundles;
 
-	public Campaign() {
+	public Campaign()
+	{
 		logger.debug("<constructor>");
 		this.bundles = new ArrayList<ProductBundle>();
 	}
 
-	public Campaign(String name) {
+	public Campaign(String name)
+	{
 		super(name);
 		this.bundles = new ArrayList<ProductBundle>();
 	}

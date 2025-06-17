@@ -26,7 +26,7 @@ public class ProductCRUDClient implements ProductCRUD
 
 		// TODO: KOMMENTIEREN SIE DEN FOLGENDEN CODE, INKLUSIVE DER ID ZUWEISUNG, EIN
 		AbstractProduct created = serviceProxy.createProduct(prod);
-		show("created " + serviceProxy.createProduct(prod));
+		show("created " + created);
 
 //		// as a side-effect we set the id of the created product on the argument before returning
 		prod.setId(created.getId());

@@ -17,8 +17,9 @@
 		<class>org.dieschnittstelle.ess.entities.erp.PointOfSale</class>
 		<class>org.dieschnittstelle.ess.entities.erp.AbstractProduct</class>
 		<class>org.dieschnittstelle.ess.entities.erp.StockItem</class>
-		<!-- //Campain und product irgendwas rein -->
-
+		<class>org.dieschnittstelle.ess.entities.erp.Campaign</class>
+		<class>org.dieschnittstelle.ess.entities.erp.Campaign</class>
+		<class>org.dieschnittstelle.ess.entities.erp.ProductBundle</class>
 
 		<properties>
 			<!-- hibernate/wildfly automatic schema generation -->
