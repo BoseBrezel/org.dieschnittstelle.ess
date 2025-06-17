@@ -11,7 +11,8 @@ import org.dieschnittstelle.ess.entities.erp.StockItem;
  * this interface shall be implemented using a ApplicationScoped CDI bean with an EntityManager.
  * See the comments below for hints at how to implement the methods
  */
-public interface StockItemCRUD {
+public interface StockItemCRUD
+{
 
     /*
      * before this method can be implemented and executed successfully, make
