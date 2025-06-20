@@ -59,7 +59,8 @@ public class PointOfSaleCRUDImpl implements PointOfSaleCRUD {
 	}
 
 	@Override
-	public List<PointOfSale> readAllPointsOfSale() {
+	public List<PointOfSale> readAllPointsOfSale()
+	{
 		return em.createQuery("SELECT DISTINCT p FROM PointOfSale AS p").getResultList();
 	}
 

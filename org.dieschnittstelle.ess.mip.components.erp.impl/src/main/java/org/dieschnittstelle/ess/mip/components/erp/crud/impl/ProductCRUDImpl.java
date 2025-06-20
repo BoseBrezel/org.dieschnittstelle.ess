@@ -73,8 +73,8 @@ public class ProductCRUDImpl implements ProductCRUD
     public List<Campaign> getCampaignsForProduct(long productID)
     {
         show("getCampaignsForProduct()");
-        Query query = em.createQuery("select p from AbstractProduct p JOIN p.items item WHERE item.erpProductId = " + productID );
-
+        Query query = em.createQuery("SELECT DISTINCT c FROM Campaign c JOIN c.bundles item WHERE item.product.id = :productId");
+        query.setParameter("productId", productID);
         return query.getResultList();
     }
 }
