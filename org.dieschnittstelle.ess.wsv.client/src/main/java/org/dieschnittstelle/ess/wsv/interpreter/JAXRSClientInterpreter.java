@@ -3,6 +3,7 @@ package org.dieschnittstelle.ess.wsv.interpreter;
 
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
+import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
@@ -11,12 +12,10 @@ import java.util.Arrays;
 import java.util.InputMismatchException;
 import java.util.List;
 
+import jakarta.ws.rs.*;
+import org.apache.http.client.methods.*;
 import org.apache.logging.log4j.Logger;
 
-import jakarta.ws.rs.GET;
-import jakarta.ws.rs.POST;
-import jakarta.ws.rs.Path;
-import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.core.HttpHeaders;
 import jakarta.ws.rs.core.MediaType;
 
@@ -24,9 +23,6 @@ import org.apache.http.HttpEntityEnclosingRequest;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
 import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.entity.ByteArrayEntity;
 
 import org.dieschnittstelle.ess.utils.Http;
@@ -58,14 +54,15 @@ public class JAXRSClientInterpreter implements InvocationHandler {
     // use a constructor that takes an annotated service interface and a baseurl. the implementation should read out the path annotation, we assume we produce and consume json, i.e. the @Produces and @Consumes annotations will not be considered here
     public JAXRSClientInterpreter(Class serviceInterface,String baseurl) {
 
-        // TODO: implement the constructor!
+        // TODO: implement the constructor! check
         this.serviceInterface = serviceInterface;
         this.baseurl = baseurl;
-        if(serviceInterface.isAnnotationPresent(Path.class)){
+        if(serviceInterface.isAnnotationPresent(Path.class))
+        {
             this.commonPath = ((Path)serviceInterface.getAnnotation(Path.class)).value();
-
         }
-        else{
+        else
+        {
             throw new RuntimeException("Cannot construct invocation handler. JAX-RS root recourse require a top-level @Path annotation!");
         }
         logger.info("<constructor>: " + serviceInterface + " / " + baseurl + " / " + commonPath);
@@ -73,12 +70,10 @@ public class JAXRSClientInterpreter implements InvocationHandler {
 
     // TODO: implement this method interpreting jax-rs annotations on the meth argument
     @Override
-    public Object invoke(Object proxy, Method meth, Object[] args)
-            throws Throwable {
-
-
+    public Object invoke(Object proxy, Method meth, Object[] args) throws Throwable
+    {
         show("invoke():  %s with args: %s", meth.getName(),args == null ? "[]" : Arrays.asList(args));
-        // TODO check whether we handle the toString method and give some appropriate return value
+        // TODO check whether we handle the toString method and give some appropriate return value check
         if("toString".equals(meth.getName()))
         {
             return "JAX-RS client proxy for " + this.serviceInterface.getName();
@@ -86,7 +81,7 @@ public class JAXRSClientInterpreter implements InvocationHandler {
         // use a default http client
         HttpClient client = Http.createSyncClient();
 
-        // TODO: create the requestUrl using baseurl and commonpath (further segments may be added if the method has an own @Path annotation)
+        // TODO: create the requestUrl using baseurl and commonpath (further segments may be added if the method has an own @Path annotation) check
         String requestUrl = baseurl + commonPath + (meth.isAnnotationPresent(Path.class) ? meth.getAnnotation(Path.class).value(): "");
 
         // TODO: check whether we have a path annotation and append the requestUrl (path params will be handled when looking at the method arguments)
@@ -96,9 +91,27 @@ public class JAXRSClientInterpreter implements InvocationHandler {
 
         // TODO: check whether we have method arguments - only consider pathparam annotations (if any) on the first argument here - if no args are passed, the value of args is null! if no pathparam annotation is present assume that the argument value is passed via the body of the http request
         if (args != null && args.length > 0) {
-            if (meth.getParameterAnnotations()[0].length > 0 && meth.getParameterAnnotations()[0][0].annotationType() == PathParam.class) {
+            if (meth.getParameterAnnotations()[0].length > 0 && meth.getParameterAnnotations()[0][0].annotationType() == PathParam.class)
+            {
                 // TODO: handle PathParam on the first argument - do not forget that in this case we might have a second argument providing a requestBodyData
                 // TODO: if we have a path param, we need to replace the corresponding pattern in the requestUrl with the parameter value
+                Annotation[][] paramAnnotations = meth.getParameterAnnotations();
+
+                if (paramAnnotations[0].length > 0 && paramAnnotations[0][0].annotationType() == PathParam.class) {
+                    // Handle PathParam on the first argument
+                    PathParam pathParam = (PathParam) paramAnnotations[0][0];
+                    String pathVariableName = pathParam.value(); // e.g. "id"
+                    String pathVariableValue = args[0].toString(); // e.g. "123"
+
+                    // Replace the corresponding pattern in the requestUrl with the parameter value
+                    // Example: /users/{id} -> /users/123
+                    requestUrl = requestUrl.replace("{" + pathVariableName + "}", pathVariableValue);
+
+                    // Check if there's a second argument (for requestBodyData)
+                    if (args.length > 1) {
+                        requestBodyData = args[1]; // second argument is treated as the request body
+                    }
+                }
             }
             else {
                 // if we do not have a path param, we assume the argument value will be sent via the body of the request
@@ -109,15 +122,25 @@ public class JAXRSClientInterpreter implements InvocationHandler {
         // declare a HttpUriRequest variable
         HttpUriRequest request = null;
 
-        // TODO: check which of the http method annotation is present and instantiate request accordingly passing the requestUrl notCheck
+        // TODO: check which of the http method annotation is present and instantiate request accordingly passing the requestUrl Check
         if (meth.isAnnotationPresent(GET.class))
         {
             request = new HttpGet(requestUrl);
         }
-        else if (meth.isAnnotationPresent(POST.class)){
+        else if (meth.isAnnotationPresent(POST.class))
+        {
             request = new HttpPost(requestUrl);
         }
-        else{
+        else if (meth.isAnnotationPresent(PUT.class))
+        {
+            request = new HttpPut(requestUrl);
+        }
+        else if (meth.isAnnotationPresent(DELETE.class))
+        {
+            request = new HttpDelete(requestUrl);
+        }
+        else
+        {
             throw new UnsupportedOperationException("Cannot handle call to " + meth.getName() + "so far only get and post are considerd");
         }
 
@@ -166,7 +189,8 @@ public class JAXRSClientInterpreter implements InvocationHandler {
             return returnValue;
 
         }
-        else {
+        else
+        {
             throw new RuntimeException("Got unexpected status from server: " + response.getStatusLine());
         }
     }

@@ -16,7 +16,8 @@ import org.eclipse.microprofile.rest.client.inject.RegisterRestClient;
 @Path("/pointsOfSale")
 @Produces({MediaType.APPLICATION_JSON})
 @Consumes({MediaType.APPLICATION_JSON})
-public interface PointOfSaleCRUD {
+public interface PointOfSaleCRUD
+{
 
 	@POST
 	public PointOfSale createPointOfSale(PointOfSale pos);

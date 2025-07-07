@@ -16,7 +16,8 @@ import jakarta.persistence.PreUpdate;
 import org.apache.logging.log4j.Logger;
 
 @Entity
-public class PointOfSale implements Serializable {
+public class PointOfSale implements Serializable
+{
 
 	/**
 	 * 

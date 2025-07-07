@@ -13,6 +13,7 @@ public class StockItem {
 	// internally, we use an own id, but do not expose it to the users of this class,
 	// which will access instances by constraints on pos and/or product
 	@Id
+	@GeneratedValue
 	private long id;
 
 	@ManyToOne

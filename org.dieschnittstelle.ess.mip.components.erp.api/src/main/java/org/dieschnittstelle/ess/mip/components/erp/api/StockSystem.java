@@ -5,7 +5,8 @@ import java.util.List;
 import org.dieschnittstelle.ess.entities.erp.IndividualisedProductItem;
 import org.dieschnittstelle.ess.entities.erp.StockItem;
 
-public interface StockSystem {
+public interface StockSystem
+{
 
 	/**
 	 * adds some units of a product to the stock of a point of sale

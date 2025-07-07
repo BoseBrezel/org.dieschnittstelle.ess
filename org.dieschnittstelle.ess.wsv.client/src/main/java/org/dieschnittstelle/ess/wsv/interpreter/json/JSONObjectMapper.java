@@ -213,12 +213,33 @@ public class JSONObjectMapper {
 
 				// check whether we have an abstract class that has jsontype
 				// info present
-				if (Modifier.isAbstract(((Class) type).getModifiers())) {
+				if (Modifier.isAbstract(((Class) type).getModifiers()))
+				{
 					// TODO: include a handling for abstract classes considering
 					// the JsonTypeInfo annotation that might be set on type
-					throw new ObjectMappingException(
-							"cannot instantiate abstract class: " + type);
-				} else {
+					if (json.has("@class"))
+					{
+						String className = json.get("@class").asText();
+						logger.debug("Classname: " + className);
+						try
+						{
+							Class<?> concreteClass = Class.forName(className);
+							obj = concreteClass.getDeclaredConstructor().newInstance();
+							type = concreteClass;
+						}
+						catch(ClassNotFoundException | InstantiationException | IllegalAccessException | NoSuchMethodException | java.lang.reflect.InvocationTargetException e)
+						{
+							logger.debug("catch JSONObjectMapper: ");
+							throw new ObjectMappingException(e);
+						}
+					}
+					else
+					{
+						throw new ObjectMappingException("Cannot instantiate abstract class without @class property in JSON: " + type);
+					}
+				}
+				else
+				{
 					obj = ((Class) type).newInstance();
 				}
 
