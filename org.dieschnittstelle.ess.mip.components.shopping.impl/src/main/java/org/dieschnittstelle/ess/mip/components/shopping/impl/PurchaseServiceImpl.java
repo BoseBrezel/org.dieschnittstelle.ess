@@ -141,11 +141,13 @@ public class PurchaseServiceImpl implements PurchaseService
 
         for (ShoppingCartItem item : this.shoppingCart.getItems())
         {
+
             // TODO: ermitteln Sie das AbstractProduct für das gegebene ShoppingCartItem. Nutzen Sie dafür dessen erpProductId und die ProductCRUD bean check
             AbstractProduct product = productCRUD.readProduct(item.getErpProductId());
 
             if(item.isCampaign())
             {
+
                 this.campaignTracking.purchaseCampaignAtTouchpoint(item.getErpProductId(), this.touchpoint, item.getUnits());
                 // TODO: wenn Sie eine Kampagne haben, muessen Sie hier
                 // 1) ueber die ProductBundle Objekte auf dem Campaign Objekt iterieren, und
