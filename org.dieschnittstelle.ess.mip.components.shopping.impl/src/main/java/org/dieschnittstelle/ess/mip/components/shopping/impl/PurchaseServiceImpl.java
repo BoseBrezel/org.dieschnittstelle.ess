@@ -18,6 +18,7 @@ import org.dieschnittstelle.ess.mip.components.crm.api.TouchpointAccess;
 import org.dieschnittstelle.ess.mip.components.crm.crud.api.CustomerCRUD;
 import org.dieschnittstelle.ess.mip.components.crm.crud.api.TouchpointCRUD;
 import org.dieschnittstelle.ess.mip.components.erp.api.StockSystem;
+import org.dieschnittstelle.ess.mip.components.erp.api.StockSystemService;
 import org.dieschnittstelle.ess.mip.components.erp.crud.api.ProductCRUD;
 import org.dieschnittstelle.ess.mip.components.shopping.api.PurchaseService;
 import org.dieschnittstelle.ess.mip.components.shopping.api.ShoppingException;
@@ -133,7 +134,7 @@ public class PurchaseServiceImpl implements PurchaseService
     private ProductCRUD productCRUD;
 
     @Inject
-    private StockSystem stockSystem;
+    private StockSystemService stockSystem;
 
     private void checkAndRemoveProductsFromStock()
     {
@@ -164,14 +165,14 @@ public class PurchaseServiceImpl implements PurchaseService
                     AbstractProduct productInBundle = bundle.getProduct();
                     int unitsTot = bundle.getUnits() * item.getUnits();
 
-                    int unitsInStock = stockSystem.getUnitsOnStock((IndividualisedProductItem) productInBundle, this.touchpoint.getErpPointOfSaleId());
+                    int unitsInStock = stockSystem.getUnitsOnStock(productInBundle.getId(), this.touchpoint.getErpPointOfSaleId());
 
                     if(unitsInStock < unitsTot)
                     {
                         throw new RuntimeException("Cannot remove not enough units in stock! ");
                     }
 
-                    this.stockSystem.removeFromStock((IndividualisedProductItem) productInBundle, this.touchpoint.getErpPointOfSaleId() , unitsTot);
+                    this.stockSystem.removeFromStock(productInBundle.getId(), this.touchpoint.getErpPointOfSaleId() , unitsTot);
                 });
             }
             else
@@ -179,14 +180,14 @@ public class PurchaseServiceImpl implements PurchaseService
 
                 // TODO: andernfalls (wenn keine Kampagne vorliegt) muessen Sie
                 // 1) das Produkt in der in item.getUnits() angegebenen Anzahl hinsichtlich Verfuegbarkeit ueberpruefen und
-                int unitsInStock = stockSystem.getUnitsOnStock((IndividualisedProductItem) product, this.touchpoint.getErpPointOfSaleId());
+                int unitsInStock = stockSystem.getUnitsOnStock( product.getId(), this.touchpoint.getErpPointOfSaleId());
 
                 if(unitsInStock < item.getUnits())
                 {
                     throw new RuntimeException("Cannot remove not enough units in stock! ");
                 }
                 // 2) das Produkt, falls verfuegbar, in der entsprechenden Anzahl aus dem Warenlager entfernen
-                this.stockSystem.removeFromStock((IndividualisedProductItem) product, this.touchpoint.getErpPointOfSaleId() , item.getUnits());
+                this.stockSystem.removeFromStock(product.getId(), this.touchpoint.getErpPointOfSaleId() , item.getUnits());
             }
         }
     }
