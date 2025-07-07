@@ -220,7 +220,6 @@ public class JSONObjectMapper {
 					if (json.has("@class"))
 					{
 						String className = json.get("@class").asText();
-						logger.debug("Classname: " + className);
 						try
 						{
 							Class<?> concreteClass = Class.forName(className);
@@ -229,7 +228,6 @@ public class JSONObjectMapper {
 						}
 						catch(ClassNotFoundException | InstantiationException | IllegalAccessException | NoSuchMethodException | java.lang.reflect.InvocationTargetException e)
 						{
-							logger.debug("catch JSONObjectMapper: ");
 							throw new ObjectMappingException(e);
 						}
 					}
